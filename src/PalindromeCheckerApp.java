@@ -1,96 +1,83 @@
 import java.util.*;
 
+public class PalindromeCheckerApp {
 
-// Strategy Interface
-interface PalindromeStrategy {
-    boolean checkPalindrome(String input);
-}
+    // Method 1: Two Pointer Approach
+    public static boolean twoPointerPalindrome(String str) {
+        int start = 0;
+        int end = str.length() - 1;
 
+        while (start < end) {
+            if (str.charAt(start) != str.charAt(end))
+                return false;
+            start++;
+            end--;
+        }
+        return true;
+    }
 
-// Stack Strategy Implementation
-class StackStrategy implements PalindromeStrategy {
-
-    public boolean checkPalindrome(String input) {
-
-        input = input.toLowerCase().replaceAll("\\s+", "");
-
+    // Method 2: Stack Based
+    public static boolean stackPalindrome(String str) {
         Stack<Character> stack = new Stack<>();
 
-        for (char c : input.toCharArray()) {
+        for (char c : str.toCharArray()) {
             stack.push(c);
         }
 
-        for (char c : input.toCharArray()) {
-            if (c != stack.pop()) {
+        for (char c : str.toCharArray()) {
+            if (c != stack.pop())
                 return false;
-            }
         }
-
         return true;
     }
-}
 
-
-// Deque Strategy Implementation
-class DequeStrategy implements PalindromeStrategy {
-
-    public boolean checkPalindrome(String input) {
-
-        input = input.toLowerCase().replaceAll("\\s+", "");
-
+    // Method 3: Deque Based
+    public static boolean dequePalindrome(String str) {
         Deque<Character> deque = new ArrayDeque<>();
 
-        for (char c : input.toCharArray()) {
+        for (char c : str.toCharArray()) {
             deque.addLast(c);
         }
 
         while (deque.size() > 1) {
-
-            char first = deque.removeFirst();
-            char last = deque.removeLast();
-
-            if (first != last) {
+            if (deque.removeFirst() != deque.removeLast())
                 return false;
-            }
         }
 
         return true;
     }
-}
-
-
-// Main Application
-public class PalindromeCheckerApp {
 
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
 
         System.out.print("Enter a string: ");
-        String input = sc.nextLine();
+        String input = sc.nextLine().toLowerCase().replaceAll("\\s+", "");
 
-        System.out.println("Choose Algorithm:");
-        System.out.println("1. Stack Strategy");
-        System.out.println("2. Deque Strategy");
+        // Two Pointer timing
+        long start1 = System.nanoTime();
+        boolean result1 = twoPointerPalindrome(input);
+        long end1 = System.nanoTime();
 
-        int choice = sc.nextInt();
+        // Stack timing
+        long start2 = System.nanoTime();
+        boolean result2 = stackPalindrome(input);
+        long end2 = System.nanoTime();
 
-        PalindromeStrategy strategy;
+        // Deque timing
+        long start3 = System.nanoTime();
+        boolean result3 = dequePalindrome(input);
+        long end3 = System.nanoTime();
 
-        // Inject strategy dynamically
-        if (choice == 1) {
-            strategy = new StackStrategy();
-        } else {
-            strategy = new DequeStrategy();
-        }
+        System.out.println("\nResults:");
+        System.out.println("Two Pointer Result: " + result1 +
+                " | Time: " + (end1 - start1) + " ns");
 
-        boolean result = strategy.checkPalindrome(input);
+        System.out.println("Stack Result: " + result2 +
+                " | Time: " + (end2 - start2) + " ns");
 
-        if (result) {
-            System.out.println("The string is a Palindrome.");
-        } else {
-            System.out.println("The string is NOT a Palindrome.");
-        }
+        System.out.println("Deque Result: " + result3 +
+                " | Time: " + (end3 - start3) + " ns");
 
         sc.close();
     }
